@@ -1,42 +1,64 @@
 package com.example._03_calcolatricetrasmissionedati.Controller;
 
-import com.example._03_calcolatricetrasmissionedati.Services.CalcolatriceService;
-import com.example._03_calcolatricetrasmissionedati.Transfer.Division;
-import com.example._03_calcolatricetrasmissionedati.Transfer.Multiply;
+import com.example._03_calcolatricetrasmissionedati.Service.CalcolatriceService;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-public class CalcolatriceController {
-    private final CalcolatriceService calcolatriceService;
+import java.util.Map;
 
-    public CalcolatriceController(CalcolatriceService calcolatriceService) {
-        this.calcolatriceService = calcolatriceService;
+@Controller
+public class CalcolatriceController {
+    private final CalcolatriceService calcolatrice;
+
+    public CalcolatriceController(CalcolatriceService calcolatrice) {
+        this.calcolatrice = calcolatrice;
     }
 
     @GetMapping("/add/{a}/{b}")
-    public String add(@PathVariable float a, @PathVariable float b) {
-        return "Somma = " + calcolatriceService.add(a, b);
+    public @ResponseBody String add(@PathVariable String a, @PathVariable String b) {
+        try {
+            float numA = Float.parseFloat(a);
+            float numB = Float.parseFloat(b);
+            return "Somma = " + calcolatrice.add(numA, numB);
+        } catch (NumberFormatException e) {
+            return "Inserito parametro non valido";
+        }
     }
 
     @GetMapping( "/sub")
-    public String sub(@RequestParam float a, @RequestParam float b) {
-        return "Differenza = " + calcolatriceService.sub(a, b);
+    public @ResponseBody String sub(@RequestParam String a, @RequestParam String b) {
+        try{
+            float numA = Float.parseFloat(a);
+            float numB = Float.parseFloat(b);
+            return "Differenza = " + calcolatrice.sub(numA, numB);
+        } catch (NumberFormatException e) {
+            return "Inserito parametro non valido";
+            }
     }
 
     @PostMapping("/mul")
-    public String mul(@RequestBody Multiply multiply) {
-        float result = calcolatriceService.mul(multiply.getA(), multiply.getB());
-        return "Prodotto = " + result;
+    public @ResponseBody String mul(@RequestBody Map<String, Object> body) {
+        try {
+            float a = Float.parseFloat(body.get("a").toString());
+            float b = Float.parseFloat(body.get("b").toString());
+            return "Prodotto = " + calcolatrice.mul(a, b);
+        } catch (Exception e) {
+            return "Inserito parametro non valido";
+        }
     }
 
     @PostMapping("div")
-    public String div(@RequestBody Division division) {
+    public @ResponseBody String div(@RequestBody Map<String, Object> body) {
         try {
-            float result = calcolatriceService.div(division.getA(), division.getB());
-            return "Divisione = " + result;
+            float a = Float.parseFloat(body.get("a").toString());
+            float b = Float.parseFloat(body.get("b").toString());
+            if (b == 0) {
+                return "Hai messo 0 al denominatore";
             }
-        catch (ArithmeticException e) {
-            return "Hai messo 0 al denominatore";
+            float result = calcolatrice.div(a, b);
+            return "Divisione = " + result;
+        } catch (Exception e) {
+            return "Inserito parametro non valido";
         }
     }
 }
