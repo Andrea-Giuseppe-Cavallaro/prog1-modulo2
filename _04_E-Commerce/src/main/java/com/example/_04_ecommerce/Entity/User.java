@@ -1,16 +1,22 @@
-package com.example._04_ecommerce.Utility;
+package com.example._04_ecommerce.Entity;
 
-public class CommerceUser {
+public class User {
+
     private String username;
     private String password;
-    private String role;
-    public CommerceUser(String username, String password, String role) {
+    private String role; // es. "admin" o "buyer"
+
+    // Costruttore vuoto (necessario per JSON -> Oggetto con Jackson)
+    public User() { }
+
+    // Costruttore con parametri
+    public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    // getter e setter
+    // GETTER e SETTER
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
